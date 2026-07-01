@@ -1,0 +1,3 @@
+pandas
+rouge-score
+requests
