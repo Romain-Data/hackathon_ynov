@@ -16,8 +16,8 @@ import json
 import requests
 import streamlit as st
 
-DEFAULT_BASE_URL = "http://localhost:11434"   # Ollama (voir INFRA)
-DEFAULT_MODEL = "phi3.5"
+DEFAULT_BASE_URL = "http://100.103.147.99:11434"   # Ollama INFRA (via Tailscale)
+DEFAULT_MODEL = "techcorp-finance"
 REQUEST_TIMEOUT = 5                            # timeout du ping de sante
 
 
