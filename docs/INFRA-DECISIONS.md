@@ -130,6 +130,15 @@ http://100.103.147.99:11434
 ```
 (prérequis : le dev web doit avoir rejoint le même tailnet Tailscale)
 
+### ✅ Validation de bout en bout (accès distant réel)
+- **Pair distant** : machine `alenzo` (`100.65.233.90`, compte `alenzo.amico@`) invitée sur le tailnet.
+- **Connectivité** : `tailscale ping` → `pong from alenzo ... via 86.210.216.74:41641 in 32ms` (**chemin direct**, pas de relais).
+- **Test applicatif** : le dev web a confirmé que `http://100.103.147.99:11434` **répond depuis sa machine** (API + modèle).
+- **Incident résolu** : bref « offline » côté pair suite à un changement d'IP réseau local (reconnexion Wi-Fi, `self=192.168.1.186`) ; Tailscale a réétabli le chemin direct automatiquement.
+- **Pare-feu** : règle `Ollama 11434` (Inbound/Allow/Enabled) confirmée en place.
+
+📸 **Capture à prendre ici** : côté dev web, le `curl http://100.103.147.99:11434/api/tags` qui renvoie la liste des modèles (preuve d'accès distant).
+
 📸 **Capture à prendre** : navigateur d'authentification Tailscale connecté (dashboard « Machines » avec ta machine).
 📸 **Capture à prendre** : `tailscale status` montrant la machine connectée + son IP 100.x.
 
@@ -143,6 +152,8 @@ http://100.103.147.99:11434
 |---|---|---|
 | B1 | `winget install tailscale.tailscale` → *No package found* (exit 20) | ID incorrect. Bon ID : **`Tailscale.Tailscale`** (majuscules). Trouvé via `winget search tailscale`. |
 | B2 | `ollama create` → `Error: invalid float value [0.3 # basse...]` | Ollama **n'accepte pas de commentaire `#` en fin de ligne `PARAMETER`**. Corrigé : commentaires déplacés sur des lignes dédiées au-dessus de chaque paramètre. |
+| B3 | Serveur non persistant : l'app tray ne relance pas le serveur en contexte non-interactif ; un `ollama serve` en tâche de fond meurt avec la session. | Créé **`ollama_server/start-ollama.ps1`** (bind 0.0.0.0). Lancé en **processus détaché** (survit à la session) + **raccourci dans le dossier Démarrage** (`shell:startup`) pour relance auto au logon. |
+| B4 | `New-NetFirewallRule` et `Register-ScheduledTask` → **Accès refusé** (droits admin requis). | Contourné sans admin via le dossier Démarrage utilisateur. La règle pare-feu reste à ajouter en PowerShell admin (recommandé pour les pairs distants). |
 
 ## 4bis. Validation du serveur (preuves)
 
