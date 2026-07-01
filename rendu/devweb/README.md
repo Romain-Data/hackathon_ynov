@@ -30,17 +30,26 @@ sur `http://localhost:8501`.
 
 > Lancement manuel équivalent : `pip install -r requirements.txt && streamlit run app.py`
 
-## 🔌 Prérequis (côté INFRA)
+## 🔌 Connexion au serveur INFRA (Tailscale)
 
-Le serveur d'inférence doit tourner. Avec Ollama :
+Le serveur **Ollama** de l'INFRA n'est **pas exposé publiquement** : l'accès passe
+par un réseau privé **Tailscale** (voir [docs/DEVWEB-CONNEXION.md](../../docs/DEVWEB-CONNEXION.md)).
 
-```bash
-ollama serve                 # démarre le serveur sur :11434
-ollama create phi3.5-financial -f ../../ollama_server/Modelfile
-```
+| Paramètre | Valeur |
+|---|---|
+| URL | `http://100.103.147.99:11434` |
+| Modèle | `techcorp-finance` |
+| API | Ollama native (`/api/chat`, `/api/tags`) |
+
+**Avant de lancer l'app**, rejoindre le tailnet :
+
+1. Installer Tailscale : https://tailscale.com/download
+2. `tailscale up` puis se connecter **au même tailnet que l'INFRA** (compte `mathysc73@`, demander une invitation).
+3. Vérifier : `tailscale status` doit lister la machine `desktop-57p5cmk`, puis
+   `curl http://100.103.147.99:11434/api/tags` doit répondre.
 
 Le nom du modèle est sélectionnable dans la sidebar (liste récupérée via
-`GET /api/tags`). Par défaut : `phi3.5`.
+`GET /api/tags`). Défauts déjà pré-remplis (`100.103.147.99:11434` / `techcorp-finance`).
 
 ## 🧩 Architecture
 
